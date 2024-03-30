@@ -65,27 +65,35 @@ async function run() {
       console.log(result);
       res.send(result)
     })
-    //  delete one article by id 
-    app.delete('/tasks/:id', async (req, res) => {
+    // updated with patch 
+    app.patch('/tasks/:id', async (req, res) => {
       const id = req.params.id;
-      const query = { _id: new ObjectId(id) }
-      const result = await taskCollection.deleteOne(query);
-      res.send(result)
+      const { status } = req.body; // New status
+      const query = { _id: new ObjectId(id) };
+      const update = { $set: { status: status } };
+      const result = await taskCollection.updateOne(query, update);
     })
-    // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
-    // console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    //     await client.close();
+      //  delete one article by id 
+      app.delete('/tasks/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) }
+        const result = await taskCollection.deleteOne(query);
+        res.send(result)
+      })
+      // Send a ping to confirm a successful connection
+      // await client.db("admin").command({ ping: 1 });
+      // console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } finally {
+      // Ensures that the client will close when you finish/error
+      //     await client.close();
+    }
   }
-}
 run().catch(console.dir);
 
 
-app.get('/', (req, res) => {
-  res.send('simple CRUD in Running')
-})
-app.listen(port, () => {
-  console.log(`Simple CURD is running on port,${port}`);
-})
+  app.get('/', (req, res) => {
+    res.send('simple CRUD in Running')
+  })
+  app.listen(port, () => {
+    console.log(`Simple CURD is running on port,${port}`);
+  })
